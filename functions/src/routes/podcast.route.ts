@@ -11,65 +11,67 @@ export class PodcastRoute {
         return this._instance;
     }
 
-    public async getRecent(req: express.Request, res: express.Response){
+    public async getRecent(req: express.Request, res: express.Response) {
 
 
 
-        try{
+        try {
             let resultats = await PodcastDAO.instance.all();
-            let  voirData:any = [];
+            let voirData: any = [];
             let filterResults = [];
 
-            
 
-            resultats.forEach((Podcast)=>{
+
+            resultats.forEach((Podcast) => {
                 voirData.push({
                     id: Podcast.id,
                     nomEmission: Podcast.data().nomEmission,
                     streamUrl: Podcast.data().streamUrl,
                     duree: Podcast.data().duree,
                     photo: Podcast.data().photo,
+                    description: Podcast.data().description,
                     createdAt: moment(Podcast.data().createdAt.toDate()).fromNow()
                 })
             })
-            if(voirData.length < 2){
+            if (voirData.length < 2) {
                 res.send(voirData);
-            }else{
+            } else {
 
-                            
+
                 for (let i = 0; i < 2; i++) {
                     filterResults.push(voirData[i]);
-                    
+
                 }
-            
+
                 res.send(filterResults);
             }
 
 
-        }catch(err){
+        } catch (err) {
             res.status(500).send(err);
         }
     }
 
-    public async get(req: express.Request, res: express.Response){
+    public async get(req: express.Request, res: express.Response) {
 
 
-        try{
+        try {
             const resultats = await PodcastDAO.instance.all();
-            const voirData:any = [];
-            resultats.forEach((Podcast)=>{
+            const voirData: any = [];
+            resultats.forEach((Podcast) => {
                 voirData.push({
                     id: Podcast.id,
                     nomEmission: Podcast.data().nomEmission,
                     streamUrl: Podcast.data().streamUrl,
                     duree: Podcast.data().duree,
                     photo: Podcast.data().photo,
+                    description: Podcast.data().description,
                     createdAt: moment(Podcast.data().createdAt.toDate()).fromNow()
                 })
             })
             res.send(voirData)
 
-        }catch(err){
+        } catch (err) {
             res.status(500).send(err);
         }
     }
@@ -77,11 +79,11 @@ export class PodcastRoute {
 
 
 
-    public async getOne(req: express.Request, res: express.Response){
+    public async getOne(req: express.Request, res: express.Response) {
 
-        try{
+        try {
             const PodcastId: string = req.params.id;
-            const Podcast:any = await PodcastDAO.instance.getOne(PodcastId);
+            const Podcast: any = await PodcastDAO.instance.getOne(PodcastId);
             res.send({
                 id: Podcast.id(),
                 NomEmission: Podcast.NomEmission(),
@@ -90,50 +92,78 @@ export class PodcastRoute {
                 Photo: Podcast.photo()
             });
 
-        }catch(err){
+        } catch (err) {
             res.status(500).send(err);
         }
     }
 
-    public async post(req: express.Request, res: express.Response){
-        try{
+    public async post(req: express.Request, res: express.Response) {
+        try {
 
-            const data:any = await PodcastDAO.instance.save(req.body);
+            const data: any = await PodcastDAO.instance.save(req.body);
             res.status(201).send({
-                id:data.id
+                id: data.id
             })
-            
-    
-        }catch(error){
+
+
+        } catch (error) {
             res.status(500).send(error);
         }
     }
 
-    public async update(req:express.Request, res: express.Response){
-        try{
+    public async update(req: express.Request, res: express.Response) {
+        try {
             const PodcastId: string = req.params.id;
             const data = await PodcastDAO.instance.update(req.body, PodcastId);
             res.status(201).json(data)
-            
 
-        }catch(error){
+
+        } catch (error) {
             res.status(500).send(error);
         }
     }
 
-    public async delete(req:express.Request, res: express.Response){
-        try{
-            
+    public async delete(req: express.Request, res: express.Response) {
+        try {
+
             const PodcastId: string = req.params.id;
 
 
             await PodcastDAO.instance.delete(PodcastId);
             res.status(201).send({
-                id:PodcastId
+                id: PodcastId
             });
 
-        }catch(error){
+        } catch (error) {
             res.status(500).send(error);
+        }
+    }
+
+
+    public async getPodcastByEmissionName(req: express.Request, res: express.Response) {
+
+        try {
+            const nameEmission: string = req.params.name;
+            const resultats = await PodcastDAO.instance.all();
+            const voirData: any = [];
+            resultats.forEach((Podcast) => {
+                voirData.push({
+                    id: Podcast.id,
+                    nomEmission: Podcast.data().nomEmission,
+                    streamUrl: Podcast.data().streamUrl,
+                    duree: Podcast.data().duree,
+                    photo: Podcast.data().photo,
+                    description: Podcast.data().description,
+                    createdAt: moment(Podcast.data().createdAt.toDate()).fromNow()
+                })
+            })
+            const result: any = voirData.filter((data: { nomEmission: string; }) => data.nomEmission.includes(nameEmission) );
+            res.send(result)
+
+
+
+        } catch (err) {
+            res.status(500).send(err);
         }
     }
 

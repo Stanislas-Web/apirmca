@@ -27,6 +27,14 @@ export const Delete = (collectionName: string, idDocument:string)=>{
 }
 
 
+export const getPodcastByEmissionName = (collectionName: string, params:String)=>{
+    return db.collection(`${collectionName}`).get();
+}
+
+
+
+
+
 
   
 

@@ -4,4 +4,5 @@ interface PodcastModel{
     StreamUrl:string 
     Duree:string
     Photo:string
+    Description:string
 }
